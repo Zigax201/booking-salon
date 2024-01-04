@@ -19,12 +19,11 @@ public class ReservationService {
 
     private static List<Person> personList = PersonRepository.getAllPerson();
     private static List<Service> serviceList = ServiceRepository.getAllService();
-    private static List<Reservation> reservationList = new ArrayList<>();
     private static Scanner input = new Scanner(System.in);
 
     private static PrintService printService = new PrintService();
 
-    public static void createReservation() {
+    public static void createReservation(List<Reservation> reservationList) {
         printService.showAllCustomer(personList);
         System.out.println("Enter customer ID for reservation: ");
         String customerId = input.nextLine();
@@ -41,8 +40,7 @@ public class ReservationService {
             if (employee != null) {
                 List<Service> selectedServices = selectServices();
 
-                System.out.println("Enter workstage (In Process, Finish, Canceled): ");
-                String workstage = input.nextLine();
+                String workstage = selectedWorkStage();
 
                 String reservationId = "Res-" + UUID.randomUUID().toString().substring(0, 6);
                 double reservationPrice = calculateReservationPrice(selectedServices);
@@ -61,16 +59,15 @@ public class ReservationService {
         }
     }
 
-    public static void editReservationWorkstage() {
+    public static void editReservationWorkstage(List<Reservation> reservationList) {
         printService.showRecentReservation(reservationList);
         System.out.println("Enter reservation ID to edit workstage: ");
         String reservationId = input.nextLine();
 
-        Reservation reservation = findReservationById(reservationId);
+        Reservation reservation = findReservationById(reservationId, reservationList);
 
         if (reservation != null) {
-            System.out.println("Enter new workstage (In Process, Finish, Canceled): ");
-            String newWorkstage = input.nextLine();
+            String newWorkstage = selectedWorkStage();
 
             reservation.setWorkstage(newWorkstage);
             System.out.println("Workstage updated successfully!");
@@ -112,11 +109,35 @@ public class ReservationService {
                 .sum();
     }
 
-    private static Reservation findReservationById(String reservationId) {
+    private static Reservation findReservationById(String reservationId, List<Reservation> reservationList) {
         return reservationList.stream()
                 .filter(reservation -> reservation.getReservationId().equals(reservationId))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public static String selectedWorkStage() {
+        int choice = 0;
+        String workstage = "";
+        System.out.printf("Enter new workstage:%n1. %s%n2. %s%n3. %s%nYour choice: ", "In Process", "Finish",
+                "Canceled");
+        choice = Integer.valueOf(input.nextLine());
+        while (choice > 3 || choice < 1) {
+            System.out.println("WorkStage is not valid! Please Try Again:");
+            choice = Integer.valueOf(input.nextLine());
+        }
+        switch (choice) {
+            case 1:
+                workstage = "In Process";
+                break;
+            case 2:
+                workstage = "Finish";
+                break;
+            case 3:
+                workstage = "Cancel";
+                break;
+        }
+        return workstage;
     }
 
     // Silahkan tambahkan function lain, dan ubah function diatas sesuai kebutuhan
