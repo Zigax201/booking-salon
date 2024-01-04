@@ -17,13 +17,15 @@ public class MenuService {
     private static Scanner input = new Scanner(System.in);
 
     public static void mainMenu() {
-        String[] mainMenuArr = {"Show Data", "Create Reservation", "Complete/cancel reservation", "Exit"};
-        String[] subMenuArr = {"Recent Reservation", "Show Customer", "Show Available Employee", "Back to main menu"};
-    
+        String[] mainMenuArr = { "Show Data", "Create Reservation", "Complete/cancel reservation", "Exit" };
+        String[] subMenuArr = { "Recent Reservation", "Show Customer", "Show Available Employee", "Back to main menu" };
+
         int optionMainMenu;
         int optionSubMenu;
 
-		boolean backToMainMenu = false;
+        final PrintService printService = new PrintService();
+
+        boolean backToMainMenu = false;
         boolean backToSubMenu = false;
         do {
             PrintService.printMenu("Main Menu", mainMenuArr);
@@ -36,33 +38,33 @@ public class MenuService {
                         // Sub menu - menu 1
                         switch (optionSubMenu) {
                             case 1:
-                                // panggil fitur tampilkan recent reservation
+                                printService.showRecentReservation(reservationList);
                                 break;
                             case 2:
-                                // panggil fitur tampilkan semua customer
+                                printService.showAllCustomer(personList);
                                 break;
                             case 3:
-                                // panggil fitur tampilkan semua employee
+                                printService.showAllEmployee(personList);
                                 break;
                             case 4:
-                                // panggil fitur tampilkan history reservation + total keuntungan
+                                printService.showHistoryReservation(reservationList);
                                 break;
                             case 0:
-                                backToSubMenu = false;
+                                backToSubMenu = true;
                         }
                     } while (!backToSubMenu);
                     break;
                 case 2:
-                    // panggil fitur menambahkan reservation
+                    ReservationService.createReservation();
                     break;
                 case 3:
-                    // panggil fitur mengubah workstage menjadi finish/cancel
+                    ReservationService.editReservationWorkstage();
                     break;
                 case 0:
-                    backToMainMenu = false;
+                    backToMainMenu = true;
                     break;
             }
         } while (!backToMainMenu);
-		
-	}
+
+    }
 }
