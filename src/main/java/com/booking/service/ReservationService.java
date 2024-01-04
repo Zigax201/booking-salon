@@ -21,7 +21,9 @@ public class ReservationService {
     private static List<Service> serviceList = ServiceRepository.getAllService();
     private static List<Reservation> reservationList = new ArrayList<>();
     private static Scanner input = new Scanner(System.in);
+
     private static PrintService printService = new PrintService();
+
     public static void createReservation() {
         printService.showAllCustomer(personList);
         System.out.println("Enter customer ID for reservation: ");
@@ -94,7 +96,7 @@ public class ReservationService {
     }
 
     private static List<Service> selectServices() {
-        printService.printServices(serviceList);
+        printService.showAvailableService(serviceList);
         System.out.println("Enter service IDs (comma-separated) for reservation: ");
         String serviceIdsInput = input.nextLine();
         List<String> selectedIds = Arrays.asList(serviceIdsInput.split(","));
