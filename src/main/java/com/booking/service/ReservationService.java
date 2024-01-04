@@ -30,33 +30,39 @@ public class ReservationService {
 
         Customer customer = findCustomerById(customerId);
 
-        if (customer != null) {
-            printService.showAllEmployee(personList);
-            System.out.println("Enter employee ID for reservation: ");
-            String employeeId = input.nextLine();
-
-            Employee employee = findEmployeeById(employeeId);
-
-            if (employee != null) {
-                List<Service> selectedServices = selectServices();
-
-                String workstage = selectedWorkStage();
-
-                String reservationId = "Res-" + UUID.randomUUID().toString().substring(0, 6);
-                double reservationPrice = calculateReservationPrice(selectedServices);
-
-                Reservation reservation = new Reservation(reservationId, customer, employee, selectedServices,
-                        workstage);
-                reservation.setReservationPrice(reservationPrice);
-
-                reservationList.add(reservation);
-                System.out.println("Reservation created successfully!");
-            } else {
-                System.out.println("Employee not found!");
-            }
-        } else {
+        while (customer != null) {
             System.out.println("Customer not found!");
+            System.out.println("Enter customer ID that exist for reservation: ");
+            customerId = input.nextLine();
+            customer = findCustomerById(customerId);
         }
+
+        printService.showAllEmployee(personList);
+        System.out.println("Enter employee ID for reservation: ");
+        String employeeId = input.nextLine();
+
+        Employee employee = findEmployeeById(employeeId);
+
+        while (employee != null) {
+            System.out.println("Employee not found!");
+            System.out.println("Enter employee ID that exist for reservation: ");
+            employeeId = input.nextLine();
+            employee = findEmployeeById(employeeId);
+        }
+
+        List<Service> selectedServices = selectServices();
+
+        String workstage = selectedWorkStage();
+
+        String reservationId = "Res-" + UUID.randomUUID().toString().substring(0, 6);
+        double reservationPrice = calculateReservationPrice(selectedServices);
+
+        Reservation reservation = new Reservation(reservationId, customer, employee, selectedServices,
+                workstage);
+        reservation.setReservationPrice(reservationPrice);
+
+        reservationList.add(reservation);
+        System.out.println("Reservation created successfully!");
     }
 
     public static void editReservationWorkstage(List<Reservation> reservationList) {
