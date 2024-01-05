@@ -31,7 +31,7 @@ public class ReservationService {
         Customer customer = findCustomerById(customerId);
 
         while (customer == null) {
-            System.out.println("Customer not found!");
+            System.out.println("Customer is not available!");
             System.out.println("Enter customer ID that exist for reservation: ");
             customerId = input.nextLine();
             customer = findCustomerById(customerId);
@@ -44,7 +44,7 @@ public class ReservationService {
         Employee employee = findEmployeeById(employeeId);
 
         while (employee == null) {
-            System.out.println("Employee not found!");
+            System.out.println("Employee is not available!");
             System.out.println("Enter employee ID that exist for reservation: ");
             employeeId = input.nextLine();
             employee = findEmployeeById(employeeId);
@@ -72,13 +72,29 @@ public class ReservationService {
 
         Reservation reservation = findReservationById(reservationId, reservationList);
 
-        if (reservation != null) {
+        while (reservation == null) {
+            System.out.println("Reservation is not available!");
+            System.out.println("Enter reservation ID that exist to edit workstage: (Input 0 to go back MainMenu)");
+            reservationId = input.nextLine();
+
+            if (reservationId.equals("0"))
+                break;
+
+            reservation = findReservationById(reservationId, reservationList);
+
+            if (reservation.getWorkstage().equals("In Process"))
+                break;
+
+            System.out.println("This reservation is completed!");
+        }
+
+        if (reservation != null && !reservationId.equals("0")) {
             String newWorkstage = selectedWorkStage();
 
             reservation.setWorkstage(newWorkstage);
             System.out.println("Workstage updated successfully!");
-        } else {
-            System.out.println("Reservation not found!");
+        } else if (!reservationId.equals("0")) {
+            System.out.println("Reservation is not available!");
         }
     }
 
@@ -113,7 +129,7 @@ public class ReservationService {
             Service service = findServiceById(serviceIdsInput, serviceList);
 
             if (service == null) {
-                System.out.println("Service not found!");
+                System.out.println("Service is not available!");
                 continue;
             }
 
