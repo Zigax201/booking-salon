@@ -55,7 +55,7 @@ public class ReservationService {
         String workstage = "In Process";
 
         String reservationId = "Res-" + UUID.randomUUID().toString().substring(0, 6);
-        double reservationPrice = calculateReservationPrice(selectedServices);
+        double reservationPrice = calculateReservationPrice(selectedServices, customer);
 
         Reservation reservation = new Reservation(reservationId, customer, employee, selectedServices,
                 workstage);
@@ -127,10 +127,23 @@ public class ReservationService {
         return selectedServices;
     }
 
-    private static double calculateReservationPrice(List<Service> selectedServices) {
-        return selectedServices.stream()
+    private static double calculateReservationPrice(List<Service> selectedServices, Customer customer) {
+        double totalPrice = selectedServices.stream()
                 .mapToDouble(Service::getPrice)
                 .sum();
+
+        if (customer != null && customer.getMember() != null) {
+            switch (customer.getMember().getMembershipName().toLowerCase()) {
+                case "silver":
+                    totalPrice *= 0.95; // Diskon 5%
+                    break;
+                case "gold":
+                    totalPrice *= 0.90; // Diskon 10%
+                    break;
+            }
+        }
+
+        return totalPrice;
     }
 
     private static Reservation findReservationById(String reservationId, List<Reservation> reservationList) {
