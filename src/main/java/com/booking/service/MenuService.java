@@ -55,7 +55,7 @@ public class MenuService {
                     } while (!backToSubMenu);
                     break;
                 case 2:
-                    ReservationService.createReservation(reservationList);
+                    ReservationService.createReservation(reservationList, personList);
                     break;
                 case 3:
                     ReservationService.editReservationWorkstage(reservationList, personList);

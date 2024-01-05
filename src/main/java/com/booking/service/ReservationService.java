@@ -17,37 +17,36 @@ import com.booking.repositories.ServiceRepository;
 
 public class ReservationService {
 
-    private static List<Person> personList = PersonRepository.getAllPerson();
     private static List<Service> serviceList = ServiceRepository.getAllService();
     private static Scanner input = new Scanner(System.in);
 
     private static PrintService printService = new PrintService();
 
-    public static void createReservation(List<Reservation> reservationList) {
+    public static void createReservation(List<Reservation> reservationList, List<Person> personList) {
         printService.showAllCustomer(personList);
         System.out.println("Enter customer ID for reservation: ");
         String customerId = input.nextLine();
 
-        Customer customer = findCustomerById(customerId);
+        Customer customer = findCustomerById(customerId, personList);
 
         while (customer == null) {
             System.out.println("Customer is not available!");
             System.out.println("Enter customer ID that exist for reservation: ");
             customerId = input.nextLine();
-            customer = findCustomerById(customerId);
+            customer = findCustomerById(customerId, personList);
         }
 
         printService.showAllEmployee(personList);
         System.out.println("Enter employee ID for reservation: ");
         String employeeId = input.nextLine();
 
-        Employee employee = findEmployeeById(employeeId);
+        Employee employee = findEmployeeById(employeeId, personList);
 
         while (employee == null) {
             System.out.println("Employee is not available!");
             System.out.println("Enter employee ID that exist for reservation: ");
             employeeId = input.nextLine();
-            employee = findEmployeeById(employeeId);
+            employee = findEmployeeById(employeeId, personList);
         }
 
         List<Service> selectedServices = selectServices();
@@ -91,18 +90,24 @@ public class ReservationService {
         if (reservation != null && !reservationId.equals("0")) {
             String newWorkstage = selectedWorkStage();
 
-            reservation.setWorkstage(newWorkstage);
+            double oldWallet = reservation.getCustomer().getWallet();
 
-            if (reservation.getWorkstage().equals("Finish"))
+            if (newWorkstage.equals("Finish"))
                 calculateCustomerWallet(reservation, personList);
 
-            System.out.println("Workstage updated successfully!");
+            if (reservation.getCustomer().getWallet() != oldWallet){
+                reservation.setWorkstage(newWorkstage);
+                System.out.println("Workstage updated successfully!");
+            } else {
+                System.out.println("Workstage updated failed!");
+            }
+
         } else if (!reservationId.equals("0")) {
             System.out.println("Reservation is not available!");
         }
     }
 
-    private static Customer findCustomerById(String customerId) {
+    private static Customer findCustomerById(String customerId, List<Person> personList) {
         return personList.stream()
                 .filter(person -> person instanceof Customer && person.getId().equals(customerId))
                 .map(person -> (Customer) person)
@@ -110,7 +115,7 @@ public class ReservationService {
                 .orElse(null);
     }
 
-    private static Employee findEmployeeById(String employeeId) {
+    private static Employee findEmployeeById(String employeeId, List<Person> personList) {
         return personList.stream()
                 .filter(person -> person instanceof Employee && person.getId().equals(employeeId))
                 .map(person -> (Employee) person)
@@ -173,9 +178,9 @@ public class ReservationService {
         for (Person person : personList) {
             if (person instanceof Customer) {
                 customer = (Customer) person;
-                if (customer.getId().equals(reservationCustomer.getId())){
+                if (customer.getId().equals(reservationCustomer.getId())) {
                     double wallet = customer.getWallet() - servicePrice;
-                    if(wallet < 0){
+                    if (wallet < 0) {
                         System.out.println("Wallet is not enough");
                         break;
                     }
