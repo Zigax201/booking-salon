@@ -37,20 +37,27 @@ public class PrintService {
         List<Reservation> inProcessReservations = reservationList.stream()
                 .filter(reservation -> "In Process".equalsIgnoreCase(reservation.getWorkstage()))
                 .collect(Collectors.toList());
-        System.out.printf("| %-4s | %-10s | %-11s | %-15s | %-15s | %-15s | %-10s |\n",
+        System.out.printf("| %-4s | %-10s | %-11s | %-20s | %-15s | %-15s | %-10s |\n",
                 "No.", "ID", "Nama Customer", "Service", "Biaya Service", "Pegawai", "Workstage");
         System.out.println(
-                "+================================================================================================+");
+                "+===========================================================================================================+");
         for (Reservation reservation : inProcessReservations) {
-            if (reservation.getWorkstage().equalsIgnoreCase("Waiting")
-                    || reservation.getWorkstage().equalsIgnoreCase("In process")) {
-                System.out.printf("| %-4s | %-4s | %-11s | %-15s | %-15s | %-15s | %-10s |\n",
-                        num, reservation.getReservationId(), reservation.getCustomer().getName(),
-                        printServices(reservation.getServices()), reservation.getReservationPrice(),
-                        reservation.getEmployee().getName(), reservation.getWorkstage());
-                num++;
+            int counter = 0;
+            for (Service service : reservation.getServices()) {
+                if (counter == 0)
+                    System.out.printf("| %-4s | %-10s | %-13s | %-20s | %-15s | %-15s | %-10s |\n",
+                            num, reservation.getReservationId(), reservation.getCustomer().getName(),
+                            service.getServiceName(), reservation.getReservationPrice(),
+                            reservation.getEmployee().getName(), reservation.getWorkstage());
+                else
+                    System.out.printf("| %-4s | %-10s | %-13s | %-20s | %-15s | %-15s | %-10s |\n",
+                            "", "", "", service.getServiceName(), "", "", "");
+                counter++;
             }
+            num++;
         }
+        System.out.println(
+                "+===========================================================================================================+");
     }
 
     public void showAllCustomer(List<Person> personList) {
@@ -68,6 +75,7 @@ public class PrintService {
                 num++;
             }
         }
+        System.out.println("+==========================================================================+");
     }
 
     public void showAllEmployee(List<Person> personList) {
@@ -83,22 +91,43 @@ public class PrintService {
                 num++;
             }
         }
+        System.out.println("+========================================================+");
     }
 
     public void showHistoryReservation(List<Reservation> reservationList) {
+        double totalProfit = 0;
         System.out.println("List of Reservation History:");
-        System.out.printf("| %-4s | %-10s | %-15s | %-15s | %-15s | %-10s |\n",
+        System.out.printf("| %-4s | %-11s | %-15s | %-20s | %-15s | %-15s | %-10s |\n",
                 "No.", "ID", "Customer Name", "Service", "Service's Price", "Pegawai", "Workstage");
         System.out
-                .println("+========================================================================================+");
+                .println(
+                        "+==============================================================================================================+");
         int num = 1;
         for (Reservation reservation : reservationList) {
-            System.out.printf("| %-4s | %-11s | %-15s | %-15s | %-15s | %-15s | %-10s |\n",
-                    num, reservation.getReservationId(), reservation.getCustomer().getName(),
-                    printServices(reservation.getServices()), reservation.getReservationPrice(),
-                    reservation.getEmployee().getName(), reservation.getWorkstage());
+            int counter = 0;
+            for (Service service : reservation.getServices()) {
+                if (counter == 0)
+                    System.out.printf("| %-4s | %-11s | %-15s | %-20s | %-15s | %-15s | %-10s |\n",
+                            num, reservation.getReservationId(), reservation.getCustomer().getName(),
+                            service.getServiceName(), reservation.getReservationPrice(),
+                            reservation.getEmployee().getName(), reservation.getWorkstage());
+                else
+                    System.out.printf("| %-4s | %-11s | %-15s | %-20s | %-15s | %-15s | %-10s |\n",
+                            "", "", "", service.getServiceName(), "", "", "");
+                counter++;
+            }
+
+            if (reservation.getWorkstage().equals("Finish"))
+                totalProfit += reservation.getReservationPrice();
             num++;
         }
+        System.out
+                .println(
+                        "+==============================================================================================================+");
+        System.out.println("Total Profit from Reservations: Rp. " + totalProfit);
+        System.out
+                .println(
+                        "+==============================================================================================================+");
     }
 
     public void showAvailableService(List<Service> serviceList) {
@@ -113,5 +142,7 @@ public class PrintService {
                     num, service.getServiceId(), service.getServiceName(), service.getPrice());
             num++;
         }
+        System.out
+                .println("+=============================================================+");
     }
 }
