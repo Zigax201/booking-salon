@@ -37,7 +37,7 @@ public class PrintService {
         List<Reservation> inProcessReservations = reservationList.stream()
                 .filter(reservation -> "In Process".equalsIgnoreCase(reservation.getWorkstage()))
                 .collect(Collectors.toList());
-        System.out.printf("| %-4s | %-11s | %-11s | %-15s | %-15s | %-15s | %-10s |\n",
+        System.out.printf("| %-4s | %-10s | %-11s | %-15s | %-15s | %-15s | %-10s |\n",
                 "No.", "ID", "Nama Customer", "Service", "Biaya Service", "Pegawai", "Workstage");
         System.out.println(
                 "+================================================================================================+");
@@ -87,7 +87,7 @@ public class PrintService {
 
     public void showHistoryReservation(List<Reservation> reservationList) {
         System.out.println("List of Reservation History:");
-        System.out.printf("| %-4s | %-20s | %-15s | %-15s | %-15s | %-10s |\n",
+        System.out.printf("| %-4s | %-10s | %-15s | %-15s | %-15s | %-10s |\n",
                 "No.", "ID", "Customer Name", "Service", "Service's Price", "Pegawai", "Workstage");
         System.out
                 .println("+========================================================================================+");

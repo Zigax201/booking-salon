@@ -30,7 +30,7 @@ public class ReservationService {
 
         Customer customer = findCustomerById(customerId);
 
-        while (customer != null) {
+        while (customer == null) {
             System.out.println("Customer not found!");
             System.out.println("Enter customer ID that exist for reservation: ");
             customerId = input.nextLine();
@@ -43,7 +43,7 @@ public class ReservationService {
 
         Employee employee = findEmployeeById(employeeId);
 
-        while (employee != null) {
+        while (employee == null) {
             System.out.println("Employee not found!");
             System.out.println("Enter employee ID that exist for reservation: ");
             employeeId = input.nextLine();
@@ -52,7 +52,7 @@ public class ReservationService {
 
         List<Service> selectedServices = selectServices();
 
-        String workstage = selectedWorkStage();
+        String workstage = "In Process";
 
         String reservationId = "Res-" + UUID.randomUUID().toString().substring(0, 6);
         double reservationPrice = calculateReservationPrice(selectedServices);
@@ -100,13 +100,31 @@ public class ReservationService {
 
     private static List<Service> selectServices() {
         printService.showAvailableService(serviceList);
-        System.out.println("Enter service IDs (comma-separated) for reservation: ");
-        String serviceIdsInput = input.nextLine();
-        List<String> selectedIds = Arrays.asList(serviceIdsInput.split(","));
+        List<Service> selectedServices = new ArrayList<>();
+        boolean loop = true;
 
-        return serviceList.stream()
-                .filter(service -> selectedIds.contains(service.getServiceId()))
-                .collect(Collectors.toList());
+        do {
+            System.out.println("Enter service IDs for reservation: (Input 0 to stop choosing service)");
+            String serviceIdsInput = input.nextLine();
+
+            if (serviceIdsInput.equals("0"))
+                break;
+
+            Service service = findServiceById(serviceIdsInput, serviceList);
+
+            if (service == null) {
+                System.out.println("Service not found!");
+                continue;
+            }
+
+            if (!selectedServices.contains(service))
+                selectedServices.add(service);
+            else
+                System.out.println("Service already selected!");
+
+        } while (loop);
+
+        return selectedServices;
     }
 
     private static double calculateReservationPrice(List<Service> selectedServices) {
@@ -118,6 +136,13 @@ public class ReservationService {
     private static Reservation findReservationById(String reservationId, List<Reservation> reservationList) {
         return reservationList.stream()
                 .filter(reservation -> reservation.getReservationId().equals(reservationId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static Service findServiceById(String serviceId, List<Service> serviceList) {
+        return serviceList.stream()
+                .filter(service -> service.getServiceId().equals(serviceId))
                 .findFirst()
                 .orElse(null);
     }

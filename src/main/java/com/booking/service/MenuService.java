@@ -18,7 +18,7 @@ public class MenuService {
 
     public static void mainMenu() {
         String[] mainMenuArr = { "Show Data", "Create Reservation", "Complete/cancel reservation", "Exit" };
-        String[] subMenuArr = { "Recent Reservation", "Show Customer", "Show Available Employee", "Back to main menu" };
+        String[] subMenuArr = { "Recent Reservation", "Show Customer", "Show Available Employee", "Show Reservation History", "Back to main menu" };
 
         int optionMainMenu;
         int optionSubMenu;
