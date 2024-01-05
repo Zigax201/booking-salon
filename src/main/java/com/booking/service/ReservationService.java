@@ -65,7 +65,7 @@ public class ReservationService {
         System.out.println("Reservation created successfully!");
     }
 
-    public static void editReservationWorkstage(List<Reservation> reservationList) {
+    public static void editReservationWorkstage(List<Reservation> reservationList, List<Person> personList) {
         printService.showRecentReservation(reservationList);
         System.out.println("Enter reservation ID to edit workstage: ");
         String reservationId = input.nextLine();
@@ -92,6 +92,10 @@ public class ReservationService {
             String newWorkstage = selectedWorkStage();
 
             reservation.setWorkstage(newWorkstage);
+
+            if (reservation.getWorkstage().equals("Finish"))
+                calculateCustomerWallet(reservation, personList);
+
             System.out.println("Workstage updated successfully!");
         } else if (!reservationId.equals("0")) {
             System.out.println("Reservation is not available!");
@@ -160,6 +164,26 @@ public class ReservationService {
         }
 
         return totalPrice;
+    }
+
+    private static void calculateCustomerWallet(Reservation reservation, List<Person> personList) {
+        Customer reservationCustomer = reservation.getCustomer();
+        double servicePrice = reservation.getReservationPrice();
+        Customer customer = new Customer();
+        for (Person person : personList) {
+            if (person instanceof Customer) {
+                customer = (Customer) person;
+                if (customer.getId().equals(reservationCustomer.getId())){
+                    double wallet = customer.getWallet() - servicePrice;
+                    if(wallet < 0){
+                        System.out.println("Wallet is not enough");
+                        break;
+                    }
+                    customer.setWallet(wallet);
+                    break;
+                }
+            }
+        }
     }
 
     private static Reservation findReservationById(String reservationId, List<Reservation> reservationList) {

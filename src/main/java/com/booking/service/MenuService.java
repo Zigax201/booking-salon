@@ -58,7 +58,7 @@ public class MenuService {
                     ReservationService.createReservation(reservationList);
                     break;
                 case 3:
-                    ReservationService.editReservationWorkstage(reservationList);
+                    ReservationService.editReservationWorkstage(reservationList, personList);
                     break;
                 case 0:
                     backToMainMenu = true;
